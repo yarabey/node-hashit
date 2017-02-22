@@ -1,10 +1,10 @@
 'use strict';
 
 var crypto = require('crypto');
-var Stringifier = require('./stringifier');
+var Stringifier = require('stringifyit');
 
-var stringify = Stringifier.stringify;
 var stringifyit = Stringifier.stringifyit;
+var stringify = Stringifier.stringify;
 
 var DEFAULT_ALGORITHM = 'md5';
 var DEFAULT_INPUT_ENCODING = 'utf8';
@@ -75,8 +75,6 @@ function hashit(value, options) {
 
 module.exports = Hasher;
 module.exports.hashit = hashit;
-module.exports.Stringifier = Stringifier;
-module.exports.stringifyit = stringifyit;
 module.exports.stringify = stringify;
 
 /**
@@ -85,4 +83,5 @@ module.exports.stringify = stringify;
  * @property {string} [inputEncoding=utf8] Input encoding
  * @property {string} [outputEncoding=hex] Output encoding (if `null` Buffer will be returned)
  * @see {@link https://nodejs.org/api/crypto.html#crypto_class_hash}
+ * @see {@link https://github.com/yarabey/stringifyit#stringifieroptions--object}
  */

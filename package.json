@@ -6,7 +6,7 @@
   "homepage": "https://github.com/yarabey/node-hashit",
   "scripts": {
     "test": "jasmine index.spec.js",
-    "docs": "jsdoc2md index.js stringifier.js -t docs/readme-template.md > README.md",
+    "docs": "jsdoc2md index.js -t docs/readme-template.md > README.md",
     "benchOps": "node --expose-gc ./bench/ops.js",
     "benchHeap": "node --expose-gc ./bench/heap.js",
     "benchSpeed": "node --expose-gc ./bench/speed.js"
@@ -39,5 +39,8 @@
   },
   "engines": {
     "node": ">=4.0.0"
+  },
+  "dependencies": {
+    "stringifyit": "^0.1.1"
   }
 }

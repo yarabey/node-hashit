@@ -1,7 +1,7 @@
 # node-hashit
-Fast node.js hash library with sorting and typing. Provide [Hasher](#Hasher) and [Stringifier](#Stringifier) classes. [Stringifier](#Stringifier) provide [stringify Symbol](#stringifierstringify--symbol) to allow you [customize](#stringifierstringifycallback--function) stringifying your own classes.
+Fast node.js hash library with sorting and typing. Provides [Hasher](#Hasher) class. [stringifyit](https://www.npmjs.com/package/stringifyit) provides [stringify Symbol](https://github.com/yarabey/stringifyit#stringifierstringify--symbol) to allow you [customize](https://github.com/yarabey/stringifyit#stringifierstringifycallback--function) stringifying your own classes.
 
-Using node.js `crypto` module. For browsers you can use [crypto-browserify](https://github.com/crypto-browserify/crypto-browserify) or only [Stringifier](#Stringifier) class.
+Using node.js `crypto` module and [stringifyit](https://www.npmjs.com/package/stringifyit) library. For browsers you can use [crypto-browserify](https://github.com/crypto-browserify/crypto-browserify) or only [stringifyit](https://www.npmjs.com/package/stringifyit) library.
 
 See [benchmarks](#benchmarks) for compare to other libs.
 
@@ -14,23 +14,12 @@ See [benchmarks](#benchmarks) for compare to other libs.
 - Supports Map/WeakMap, Set/WeakSet and typed arrays
 - Supports algorithms and encodings from node.js `crypto` module
 - Supports sort Set, Map, object keys and optional sort arrays
-- Supports custom hash rules for user-defined classes
+- Supports custom stringify rules for user-defined classes (provided by [stringifyit](https://www.npmjs.com/package/stringifyit) library)
 - One of the fastest hash libraries
 
 # API
 
 {{>main}}
-
-## Custom stringifiers [source](stringifiers)
-
-### Object.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
-### Array.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
-### TypedArray.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
-### Map.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
-### WeakMap.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
-### Set.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
-### WeakSet.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
-### Date.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
 
 # Benchmarks
 
