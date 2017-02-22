@@ -13,17 +13,17 @@ let testCases = {
     nestedObject: deepThrow({
         a: 'rwter'
     }, 100),
-    complexObject1: new Array(100000).fill(1).map(getFakeRealData),
-    complexObject2: new Array(100000).fill(1).map(getFakeRealData),
-    complexObject3: new Array(100000).fill(1).map(getFakeRealData),
-    complexObject4: new Array(100000).fill(1).map(getFakeRealData),
+    complexObject1: new Array(100000).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
+    complexObject2: new Array(100000).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
+    complexObject3: new Array(100000).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
+    complexObject4: new Array(100000).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
 };
 
 // node-object-hash only can toggle all sorts (arrays, maps, sets, object.keys) so we should sort arrays
-const hashitParams = {sortArrays: true};
+const hashitParams = {sortArrays: true, includePrimitiveTypes: true};
 
 console.log(`Warming up...`);
-for (const complexObject of new Array(10000).fill(1).map(getFakeRealData)) {
+for (const complexObject of new Array(10000).fill(1).reduce(acc => acc.concat(getFakeRealData()), [])) {
     warmUp(hashit, hashitParams, 1, complexObject);
     warmUp(nodeObjectHash, nodeObjectHashParams, 1, complexObject);
     warmUp(hashObject, null, 1, complexObject);

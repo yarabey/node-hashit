@@ -9,6 +9,8 @@ const Benchmark = require('benchmark');
 
 const hashit = require('..').hashit;
 
+const params = {includePrimitiveTypes: true};
+
 let testCases = {
     array: new Array(10).fill('sdfgsdfg'),
     object: {
@@ -17,9 +19,9 @@ let testCases = {
     nestedObject: deepThrow({
         a: 'rwter'
     }, 100),
-    complexObject_5items: new Array(5).fill(1).map(getFakeRealData),
-    complexObject_10items: new Array(10).fill(1).map(getFakeRealData),
-    complexObject_100items: new Array(100).fill(1).map(getFakeRealData),
+    complexObject_5items: new Array(5).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
+    complexObject_10items: new Array(10).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
+    complexObject_100items: new Array(100).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
     set: new Set(['adfs', 'wer', 'sdf', 'bcvb', 'yutr']),
     map: new Map([['fgdsfg', 'rtyre'], ['adsasf', 'tyer'], ['dfgddf', 'rtyr']])
 };
@@ -28,7 +30,7 @@ const testCasesNames = Object.keys(testCases);
 
 console.log(`Warming up...`);
 for (const caseName of testCasesNames) {
-    warmUp(hashit, null, 1000, testCases[caseName]);
+    warmUp(hashit, params, 1000, testCases[caseName]);
 }
 
 doCase(0);
@@ -46,7 +48,7 @@ function doCase(caseNameIndex) {
 
     suite
         .add(caseName, function() {
-            hashit(testData);
+            hashit(testData, params);
         })
         .on('cycle', function(event) {
             console.log(String(event.target));

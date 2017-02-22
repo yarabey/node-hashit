@@ -18,9 +18,9 @@ let testCases = {
     nestedObject: deepThrow({
         a: 'rwter'
     }, 100),
-    complexObject_5items: new Array(5).fill(1).map(getFakeRealData),
-    complexObject_10items: new Array(10).fill(1).map(getFakeRealData),
-    complexObject_100items: new Array(100).fill(1).map(getFakeRealData),
+    complexObject_5items: new Array(5).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
+    complexObject_10items: new Array(10).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
+    complexObject_100items: new Array(100).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
 
     // hashObject can't hash Map, Set and typed arrays
     // set: new Set(['adfs', 'wer', 'sdf', 'bcvb', 'yutr']),
@@ -32,7 +32,7 @@ let results = {};
 const testCasesNames = Object.keys(testCases);
 
 // node-object-hash only can toggle all sorts (arrays, maps, sets, object.keys) so we should sort arrays
-const hashitParams = {sortArrays: true};
+const hashitParams = {sortArrays: true, includePrimitiveTypes: true};
 
 console.log(`Warming up...`);
 for (const caseName of testCasesNames) {
