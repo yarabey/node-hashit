@@ -11,7 +11,7 @@ var DEFAULT_INPUT_ENCODING = 'utf8';
 var DEFAULT_OUTPUT_ENCODING = 'hex';
 
 /**
- * Provide interface to hash any value
+ * Provides interface to hash any value
  */
 class Hasher {
 
@@ -29,27 +29,20 @@ class Hasher {
      * @param [inputEncoding] {string} Input encoding
      */
     update(value, inputEncoding) {
-        this.hasher.update(
-            stringifyit(value, this.options),
-            inputEncoding || this.options.inputEncoding || DEFAULT_INPUT_ENCODING
-        );
+        var hashValue = value instanceof Buffer ? value : stringifyit(value, this.options);
+
+        this.hasher.update(hashValue, inputEncoding || this.options.inputEncoding || DEFAULT_INPUT_ENCODING);
     }
 
     /**
      * @see {@link https://nodejs.org/api/crypto.html#crypto_hash_digest_encoding}
-     * @param [outputEncoding] {string} Output encoding
-     * @returns {string}
+     * @param [outputEncoding] {string} Output encoding (if `null` Buffer will be returned)
+     * @returns {string|Buffer}
      */
     digest(outputEncoding) {
-        return this.hasher.digest(outputEncoding || this.options.outputEncoding || DEFAULT_OUTPUT_ENCODING);
-    }
+        var encoding = outputEncoding || this.options.outputEncoding;
 
-    /**
-     * @see {@link https://nodejs.org/api/crypto.html#crypto_hash_digest_encoding}
-     * @returns {Buffer}
-     */
-    digestBuffer() {
-        return this.hasher.digest();
+        return this.hasher.digest(encoding || encoding === null ? encoding : DEFAULT_OUTPUT_ENCODING);
     }
 }
 
@@ -90,6 +83,6 @@ module.exports.stringify = stringify;
  * @typedef {Stringifier~options} Hasher~options
  * @property {string} [algorithm=md5] Hash algorithm
  * @property {string} [inputEncoding=utf8] Input encoding
- * @property {string} [outputEncoding=hex] Output encoding
+ * @property {string} [outputEncoding=hex] Output encoding (if `null` Buffer will be returned)
  * @see {@link https://nodejs.org/api/crypto.html#crypto_class_hash}
  */
