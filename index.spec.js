@@ -33,6 +33,10 @@ const testCases = {
         ['1', '2', '3'],
         [1, 2, 3]
     ],
+    objectNull: [
+        Object.create(null),
+        Object.create(null)
+    ],
     complex: [
         {
             a: 1,
@@ -94,8 +98,16 @@ describe('Hashit', () => {
         checkHashesEquality(testCases.object, true);
     });
 
-    it('should hash with types', () => {
-        checkHashesEquality(testCases.types, false);
+    it('should not hash with types by default', () => {
+        checkHashesEquality(testCases.types, true);
+    });
+
+    it('should hash Object.create(null) objects', () => {
+        checkHashesEquality(testCases.objectNull, true);
+    });
+
+    it('should hash with types if includePrimitiveTypes is true', () => {
+        checkHashesEquality(testCases.types, false, {includePrimitiveTypes: true});
     });
 
     it('should hash nested objects', () => {
@@ -111,9 +123,9 @@ describe('Hashit', () => {
     });
 });
 
-function checkHashesEquality(testCase, shouldBeEqual) {
-    const digest1 = hashit(testCase[0], {outputEncoding: 'hex'});
-    const digest2 = hashit(testCase[1], {outputEncoding: 'hex'});
+function checkHashesEquality(testCase, shouldBeEqual, params) {
+    const digest1 = hashit(testCase[0], Object.assign({outputEncoding: 'hex'}, params));
+    const digest2 = hashit(testCase[1], Object.assign({outputEncoding: 'hex'}, params));
 
     if (shouldBeEqual) {
         expect(digest1).toBe(digest2);
