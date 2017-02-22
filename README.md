@@ -23,11 +23,11 @@ See [benchmarks](#benchmarks) for compare to other libs.
 
 <dl>
 <dt><a href="#Hasher">Hasher</a></dt>
-<dd><p>Provide interface to hash any value</p>
+<dd><p>Provides interface to hash any value</p>
 </dd>
 <dt><a href="#Stringifier">Stringifier</a></dt>
-<dd><p>Provide interface to stringify any value
-Sort Map and Set by default without ability to avoid it</p>
+<dd><p>Provides interface to stringify any value
+Sort Map, Set and object keys by default without ability to avoid it</p>
 </dd>
 </dl>
 
@@ -47,18 +47,12 @@ Sort Map and Set by default without ability to avoid it</p>
 <dt><a href="#stringifyit">stringifyit(value, [options])</a> ⇒ <code>string</code></dt>
 <dd><p>Helper for simple stringify single value</p>
 </dd>
-<dt><a href="#typeOf">typeOf(value)</a> ⇒ <code>string</code></dt>
-<dd><p>Custom typeof, returns &#39;null&#39; for null object</p>
-</dd>
-<dt><a href="#compareMapItems">compareMapItems(item1, item2)</a> ⇒ <code>boolean</code></dt>
-<dd><p>Helper to compare two Map items</p>
-</dd>
 </dl>
 
 <a name="Hasher"></a>
 
 ## Hasher
-Provide interface to hash any value
+Provides interface to hash any value
 
 **Kind**: global class  
 
@@ -66,8 +60,7 @@ Provide interface to hash any value
     * [new Hasher([options])](#new_Hasher_new)
     * _instance_
         * [.update(value, [inputEncoding])](#Hasher+update)
-        * [.digest([outputEncoding])](#Hasher+digest) ⇒ <code>string</code>
-        * [.digestBuffer()](#Hasher+digestBuffer) ⇒ <code>Buffer</code>
+        * [.digest([outputEncoding])](#Hasher+digest) ⇒ <code>string</code> &#124; <code>Buffer</code>
     * _inner_
         * [~options](#Hasher..options) : <code>[options](#Stringifier..options)</code>
 
@@ -93,19 +86,14 @@ Updates hash with stringified value
 
 <a name="Hasher+digest"></a>
 
-### hasher.digest([outputEncoding]) ⇒ <code>string</code>
+### hasher.digest([outputEncoding]) ⇒ <code>string</code> &#124; <code>Buffer</code>
 **Kind**: instance method of <code>[Hasher](#Hasher)</code>  
 **See**: [https://nodejs.org/api/crypto.html#crypto_hash_digest_encoding](https://nodejs.org/api/crypto.html#crypto_hash_digest_encoding)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [outputEncoding] | <code>string</code> | Output encoding |
+| [outputEncoding] | <code>string</code> | Output encoding (if `null` Buffer will be returned) |
 
-<a name="Hasher+digestBuffer"></a>
-
-### hasher.digestBuffer() ⇒ <code>Buffer</code>
-**Kind**: instance method of <code>[Hasher](#Hasher)</code>  
-**See**: [https://nodejs.org/api/crypto.html#crypto_hash_digest_encoding](https://nodejs.org/api/crypto.html#crypto_hash_digest_encoding)  
 <a name="Hasher..options"></a>
 
 ### Hasher~options : <code>[options](#Stringifier..options)</code>
@@ -117,21 +105,21 @@ Updates hash with stringified value
 | --- | --- | --- | --- |
 | algorithm | <code>string</code> | <code>&quot;md5&quot;</code> | Hash algorithm |
 | inputEncoding | <code>string</code> | <code>&quot;utf8&quot;</code> | Input encoding |
-| outputEncoding | <code>string</code> | <code>&quot;hex&quot;</code> | Output encoding |
+| outputEncoding | <code>string</code> | <code>&quot;hex&quot;</code> | Output encoding (if `null` Buffer will be returned) |
 
 <a name="Stringifier"></a>
 
 ## Stringifier
-Provide interface to stringify any value
-Sort Map and Set by default without ability to avoid it
+Provides interface to stringify any value
+Sort Map, Set and object keys by default without ability to avoid it
 
 **Kind**: global class  
 
 * [Stringifier](#Stringifier)
     * [new Stringifier([options])](#new_Stringifier_new)
     * _instance_
+        * [.string](#Stringifier+string) : <code>string</code>
         * [.update(value)](#Stringifier+update)
-        * [.getString()](#Stringifier+getString) ⇒ <code>string</code>
     * _inner_
         * [~stringifyCallback](#Stringifier..stringifyCallback) : <code>function</code>
         * [~stringify](#Stringifier..stringify) : <code>Symbol</code>
@@ -145,6 +133,13 @@ Sort Map and Set by default without ability to avoid it
 | --- | --- |
 | [options] | <code>[options](#Stringifier..options)</code> | 
 
+<a name="Stringifier+string"></a>
+
+### stringifier.string : <code>string</code>
+Accumulator string
+
+**Kind**: instance property of <code>[Stringifier](#Stringifier)</code>  
+**Access:** public  
 <a name="Stringifier+update"></a>
 
 ### stringifier.update(value)
@@ -156,12 +151,6 @@ Stringifies value and append it to current accumulator string
 | --- | --- |
 | value | <code>\*</code> | 
 
-<a name="Stringifier+getString"></a>
-
-### stringifier.getString() ⇒ <code>string</code>
-Returns accumulator string
-
-**Kind**: instance method of <code>[Stringifier](#Stringifier)</code>  
 <a name="Stringifier..stringifyCallback"></a>
 
 ### Stringifier~stringifyCallback : <code>function</code>
@@ -171,16 +160,18 @@ Custom stringify callback declared with [stringify Symbol](#Stringifier..stringi
 
 | Param | Type | Description |
 | --- | --- | --- |
-| update | <code>function</code> | Stringifier#update method |
-| options | <code>[options](#Stringifier..options)</code> | Stringifier#options |
-| object | <code>Object</code> | Currently stringifying object (`this` in callback) |
+| stringifier | <code>[Stringifier](#Stringifier)</code> | Stringifier instance |
 
 **Example**  
 ```js
 const {stringify} = require('node-hashit');
-CustomType.prototype[stringify] = function (update) {
-    update(this.someProp);
-    update(['use', 'any', 'type']);
+CustomType.prototype[stringify] = function (stringifier) {
+    stringifier.string += 'start';
+
+    stringifier.update(this.someProp);
+    stringifier.update(['use', 'any', 'type']);
+
+    stringifier.string += 'end';
 }
 ```
 <a name="Stringifier..stringify"></a>
@@ -200,6 +191,8 @@ Stringifier options
 | Name | Type | Description |
 | --- | --- | --- |
 | sortArrays | <code>boolean</code> | Sort arrays before stringify |
+| includePrimitiveTypes | <code>boolean</code> | Stringify primitive values (and functions) types |
+| includeConstructorNames | <code>boolean</code> | Stringify non-primitive values constructor names |
 
 <a name="stringify"></a>
 
@@ -255,28 +248,17 @@ stringifyit([1, 2, 3], {sortArrays: true}) === stringifyit([1, 3, 2], {sortArray
 stringifyit([1, 2, 3]) === stringifyit([1, 3, 2]); // false
 stringifyit(5) === stringifyit('5'); // false
 ```
-<a name="typeOf"></a>
 
-## typeOf(value) ⇒ <code>string</code>
-Custom typeof, returns 'null' for null object
+## Custom stringifiers [source](stringifiers)
 
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| value | <code>\*</code> | 
-
-<a name="compareMapItems"></a>
-
-## compareMapItems(item1, item2) ⇒ <code>boolean</code>
-Helper to compare two Map items
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| item1 | <code>Array.&lt;Array.&lt;string&gt;&gt;</code> | 
-| item2 | <code>Array.&lt;Array.&lt;string&gt;&gt;</code> |
+### Object.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
+### Array.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
+### TypedArray.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
+### Map.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
+### WeakMap.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
+### Set.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
+### WeakSet.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
+### Date.prototype[[stringify](#Stringifier..stringify)] : <code>[stringifyCallback](#Stringifier..stringifyCallback)</code>
 
 # Benchmarks
 
@@ -284,70 +266,69 @@ Benchmarked with Node.js v6.9.5
 
 ## Usage
 
-* `npm run benchOps` to run comparison operations/second with other libs for different cases (with arrays sorting)
+* `npm run benchOps` to run comparison operations/second with other libs for different cases
 * `npm run benchHeap` to run comparison heap using with other libs for complex cases
-* `npm run benchSpeed` to run benchmarking hashit operations/second for different cases (without arrays sorting)
+* `npm run benchSpeed` to run benchmarking hashit operations/second for different cases
 
 ## Results
 
-### Operations/second comparison [source](bench/ops.js)
+### Operations/second comparison (+includePrimitiveTypes +sortArrays) [source](bench/ops.js)
 
 ```
-hashit/array x 226,171 ops/sec ±1.54% (86 runs sampled)
+hashit/array x 255,710 ops/sec ±1.54% (86 runs sampled)
 nodeObjectHash/array x 174,084 ops/sec ±2.11% (84 runs sampled)
 hashObject/array x 140,706 ops/sec ±1.56% (82 runs sampled)
 objectHash/array x 48,767 ops/sec ±1.55% (88 runs sampled)
 
-hashit/object x 429,654 ops/sec ±1.18% (82 runs sampled)
+hashit/object x 426,051 ops/sec ±1.18% (82 runs sampled)
 nodeObjectHash/object x 354,923 ops/sec ±1.59% (83 runs sampled)
 hashObject/object x 350,324 ops/sec ±1.40% (84 runs sampled)
 objectHash/object x 27,030 ops/sec ±1.39% (83 runs sampled)
 
-hashit/nestedObject x 15,936 ops/sec ±1.31% (87 runs sampled)
-nodeObjectHash/nestedObject x 14,452 ops/sec ±4.74% (81 runs sampled)
+hashit/nestedObject x 22,024 ops/sec ±1.31% (87 runs sampled)
+nodeObjectHash/nestedObject x 16,252 ops/sec ±4.74% (81 runs sampled)
 hashObject/nestedObject x 17,689 ops/sec ±1.92% (85 runs sampled)
 objectHash/nestedObject x 657 ops/sec ±1.27% (84 runs sampled)
 
-hashit/complexObject_5items x 15,419 ops/sec ±1.56% (86 runs sampled)
+hashit/complexObject_5items x 18,813 ops/sec ±1.56% (86 runs sampled)
 nodeObjectHash/complexObject_5items x 9,922 ops/sec ±1.58% (87 runs sampled)
 hashObject/complexObject_5items x 2,561 ops/sec ±1.65% (84 runs sampled)
 objectHash/complexObject_5items x 1,433 ops/sec ±1.37% (85 runs sampled)
 
-hashit/complexObject_10items x 8,039 ops/sec ±1.57% (86 runs sampled)
+hashit/complexObject_10items x 9,893 ops/sec ±1.57% (86 runs sampled)
 nodeObjectHash/complexObject_10items x 4,906 ops/sec ±2.10% (86 runs sampled)
 hashObject/complexObject_10items x 1,331 ops/sec ±1.21% (85 runs sampled)
 objectHash/complexObject_10items x 722 ops/sec ±1.65% (82 runs sampled)
 
-hashit/complexObject_100items x 731 ops/sec ±1.68% (84 runs sampled)
+hashit/complexObject_100items x 924 ops/sec ±1.68% (84 runs sampled)
 nodeObjectHash/complexObject_100items x 483 ops/sec ±1.72% (84 runs sampled)
 hashObject/complexObject_100items x 129 ops/sec ±1.35% (70 runs sampled)
 objectHash/complexObject_100items x 66.61 ops/sec ±1.44% (65 runs sampled)
 
-hashit faster in cases: array, object, complexObject_5items, complexObject_10items, complexObject_100items (5)
-hashObject faster in cases: nestedObject (1)
+hashit faster in cases: array, object, nestedObject, complexObject_5items, complexObject_10items, complexObject_100items (6)
 
 ```
 
-### Heap using comparison [source](bench/heap.js)
+### Heap using comparison  (+includePrimitiveTypes +sortArrays) [source](bench/heap.js)
 
 | Library                               | Time (ms)  | Memory (Mb)        |
 |---------------------------------------|------------|--------------------|
-| hashit-0.1.0                          | 2488.388   | 35                 |
-| node-object-hash-1.1.6                | 2752.648   | 39                 |
+| hashit-0.1.0                          | 2150.435   | 42                 |
+| node-object-hash-1.2.0                | 2635.670   | 39                 |
 | object-hash-1.1.5                     | 17325.391  | 62                 |
 | hash-object-0.1.7                     | 9762.324   | 51                 |
 
-### Operations/second hashit benchmarking [source](bench/speed.js)
+### Operations/second hashit benchmarking (+includePrimitiveTypes -sortArrays) [source](bench/speed.js)
 
 ```
-array x 360,562 ops/sec ±1.05% (87 runs sampled)
-object x 378,116 ops/sec ±4.03% (81 runs sampled)
-nestedObject x 16,248 ops/sec ±1.38% (82 runs sampled)
-complexObject_5items x 16,926 ops/sec ±1.96% (85 runs sampled)
-complexObject_10items x 8,946 ops/sec ±1.54% (85 runs sampled)
-complexObject_100items x 847 ops/sec ±1.90% (84 runs sampled)
-set x 117,662 ops/sec ±2.15% (83 runs sampled)
-map x 103,568 ops/sec ±2.23% (86 runs sampled)
+array x 363,314 ops/sec ±1.37% (84 runs sampled)
+object x 429,485 ops/sec ±1.29% (85 runs sampled)
+nestedObject x 22,396 ops/sec ±1.19% (85 runs sampled)
+complexObject_5items x 18,482 ops/sec ±1.51% (86 runs sampled)
+complexObject_10items x 9,729 ops/sec ±1.51% (84 runs sampled)
+complexObject_100items x 896 ops/sec ±1.78% (83 runs sampled)
+set x 115,158 ops/sec ±1.93% (83 runs sampled)
+map x 110,525 ops/sec ±1.92% (83 runs sampled)
 ```
 
 ## Links
