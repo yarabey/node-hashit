@@ -9,15 +9,24 @@ const hashObject = require('hash-object');
 const objectHash = require('object-hash').MD5;
 const nodeObjectHash = require('node-object-hash')(nodeObjectHashParams).hash;
 
+let itemsCount = 100000;
+
 let testCases = {
     nestedObject: deepThrow({
         a: 'rwter'
     }, 100),
-    complexObject1: new Array(100000).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
-    complexObject2: new Array(100000).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
-    complexObject3: new Array(100000).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
-    complexObject4: new Array(100000).fill(1).reduce(acc => acc.concat(getFakeRealData()), []),
+    complexObject1: [],
+    complexObject2: [],
+    complexObject3: [],
+    complexObject4: [],
 };
+
+while (itemsCount --> 0) {
+    testCases.complexObject1.push(getFakeRealData());
+    testCases.complexObject2.push(getFakeRealData());
+    testCases.complexObject3.push(getFakeRealData());
+    testCases.complexObject4.push(getFakeRealData());
+}
 
 // node-object-hash only can toggle all sorts (arrays, maps, sets, object.keys) so we should sort arrays
 const hashitParams = {sortArrays: true, includePrimitiveTypes: true};
