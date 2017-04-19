@@ -1,6 +1,7 @@
 'use strict';
 
 const Hashit = require('.');
+const HashitRangeError = require('./error').HashitRangeError;
 
 const hashit = Hashit.hashit;
 
@@ -120,6 +121,13 @@ describe('Hashit', () => {
 
     it('should hash complex data', () => {
         checkHashesEquality(testCases.complex, true);
+    });
+
+    it('should throw StringifierRangeError for cycled object', () => {
+        const data = {};
+        data.data = data;
+
+        expect(hashit.bind(null, data, {outputEncoding: 'hex'})).toThrowError(HashitRangeError);
     });
 });
 

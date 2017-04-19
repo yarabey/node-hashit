@@ -64,6 +64,10 @@ Provides interface to hash any value
 Updates hash with stringified value
 
 **Kind**: instance method of <code>[Hasher](#Hasher)</code>  
+**Throws**:
+
+- <code>HashitRangeError</code> 
+
 
 | Param | Type | Description |
 | --- | --- | --- |

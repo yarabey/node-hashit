@@ -1,10 +1,11 @@
 'use strict';
 
 var crypto = require('crypto');
-var Stringifier = require('stringifyit');
+var stringifyit = require('stringifyit').stringifyit;
+var stringify = require('stringifyit').stringify;
+var StringifierRangeError = require('stringifyit/error').StringifierRangeError;
 
-var stringifyit = Stringifier.stringifyit;
-var stringify = Stringifier.stringify;
+var HashitRangeError = require('./error').HashitRangeError;
 
 var DEFAULT_ALGORITHM = 'md5';
 var DEFAULT_INPUT_ENCODING = 'utf8';
@@ -27,9 +28,10 @@ class Hasher {
      * Updates hash with stringified value
      * @param value {*}
      * @param [inputEncoding] {string} Input encoding
+     * @throws {HashitRangeError}
      */
     update(value, inputEncoding) {
-        var hashValue = value instanceof Buffer ? value : stringifyit(value, this.options);
+        var hashValue = value instanceof Buffer ? value : stringifyValue(value, this.options);
 
         this.hasher.update(hashValue, inputEncoding || this.options.inputEncoding || DEFAULT_INPUT_ENCODING);
     }
@@ -43,6 +45,18 @@ class Hasher {
         var encoding = outputEncoding || this.options.outputEncoding;
 
         return this.hasher.digest(encoding || encoding === null ? encoding : DEFAULT_OUTPUT_ENCODING);
+    }
+}
+
+function stringifyValue(value, options) {
+    try {
+        return stringifyit(value, options);
+    } catch (error) {
+        if (error instanceof StringifierRangeError) {
+            throw new HashitRangeError();
+        }
+
+        throw error;
     }
 }
 

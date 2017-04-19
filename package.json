@@ -41,6 +41,6 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "stringifyit": "0.1.3"
+    "stringifyit": "0.2.1"
   }
 }
